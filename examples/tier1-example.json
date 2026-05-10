@@ -1,0 +1,83 @@
+{
+  "manifest_version": "1.0-draft",
+  "scanned_at": "2026-05-10T15:40:33.000000+00:00",
+  "source_file": "team-notification-settings-api-v1.yaml",
+  "inferred_risk_tier": 1,
+  "nexum_risk_score": 50,
+  "model_compatibility_range": "REQUIRES_HUMAN_REVIEW",
+  "auto_detected_invariants": {
+    "immutable_fields": ["channel_type", "created_at", "id", "team_id"],
+    "numeric_limits": {
+      "NotificationChannel.retry_count": { "minimum": 0, "maximum": 10 },
+      "NotificationChannel.rate_limit_per_hour": { "minimum": 1, "maximum": 1000 },
+      "NotificationSettings.digest_interval_minutes": { "minimum": 15, "maximum": 10080 }
+    },
+    "required_headers": []
+  },
+  "findings_summary": [
+    {
+      "rule_id": "NEXUM-004",
+      "rule_name": "IdempotencyMissing",
+      "severity": "HIGH",
+      "path": "/teams/{team_id}/notification-settings",
+      "method": "PATCH"
+    },
+    {
+      "rule_id": "NEXUM-004",
+      "rule_name": "IdempotencyMissing",
+      "severity": "HIGH",
+      "path": "/teams/{team_id}/notification-settings/channels/{channel_id}",
+      "method": "PUT"
+    },
+    {
+      "rule_id": "NEXUM-004",
+      "rule_name": "IdempotencyMissing",
+      "severity": "HIGH",
+      "path": "/teams/{team_id}/notification-settings/channels",
+      "method": "POST"
+    },
+    {
+      "rule_id": "NEXUM-004",
+      "rule_name": "IdempotencyMissing",
+      "severity": "HIGH",
+      "path": "/teams/{team_id}/notification-settings/test",
+      "method": "POST"
+    },
+    {
+      "rule_id": "NEXUM-005",
+      "rule_name": "SchemaVolatility",
+      "severity": "MEDIUM",
+      "path": "/teams/{team_id}/notification-settings",
+      "method": "PATCH"
+    },
+    {
+      "rule_id": "NEXUM-005",
+      "rule_name": "SchemaVolatility",
+      "severity": "MEDIUM",
+      "path": "/teams/{team_id}/notification-settings/channels/{channel_id}",
+      "method": "PUT"
+    }
+  ],
+  "manual_review_required": [
+    {
+      "field": "model_compatibility_range",
+      "reason": "Cannot be inferred from the spec. Depends on model capabilities, deployment context, and the desired trust level for this integration."
+    },
+    {
+      "field": "agent_write_scope",
+      "reason": "The spec does not define whether agent credentials are scoped to a single team or grant write access across all teams. Verify that OAuth scopes or API key permissions are team-scoped before allowing autonomous writes."
+    },
+    {
+      "field": "change_approval_policy",
+      "reason": "PATCH operations on notification-settings affect all team members immediately. Determine whether bulk configuration changes by an agent require human approval or are captured in an audit log with rollback capability."
+    },
+    {
+      "field": "idempotency_key_enforcement",
+      "reason": "NEXUM-004 fired on 4 operations. No operation in this spec declares Idempotency-Key as a required header, which is why required_headers is empty. Before autonomous agent access, enforce Idempotency-Key at the gateway level for PATCH /notification-settings, PUT /channels/{channel_id}, and POST /channels."
+    },
+    {
+      "field": "test_notification_retry_risk",
+      "reason": "POST /notification-settings/test has no Idempotency-Key. Agent retries on this endpoint will send duplicate test alerts to all team members. Confirm whether the orchestration layer enforces exactly-once delivery for this operation, or gate it behind explicit human invocation."
+    }
+  ]
+}

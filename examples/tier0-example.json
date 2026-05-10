@@ -1,0 +1,24 @@
+{
+  "manifest_version": "1.0-draft",
+  "scanned_at": "2026-05-10T14:22:08.000000+00:00",
+  "source_file": "acme-catalog-api-v2.yaml",
+  "inferred_risk_tier": 0,
+  "nexum_risk_score": 0,
+  "model_compatibility_range": "REQUIRES_HUMAN_REVIEW",
+  "auto_detected_invariants": {
+    "immutable_fields": ["created_at", "id", "sku"],
+    "numeric_limits": {
+      "Product.price": { "minimum": 0 },
+      "Product.stock_count": { "minimum": 0, "maximum": 99999 },
+      "SearchResult.page_size": { "minimum": 1, "maximum": 100 }
+    },
+    "required_headers": []
+  },
+  "findings_summary": [],
+  "manual_review_required": [
+    {
+      "field": "model_compatibility_range",
+      "reason": "Cannot be inferred from the spec. Depends on model capabilities, deployment context, and the desired trust level for this integration."
+    }
+  ]
+}

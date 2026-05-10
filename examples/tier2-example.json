@@ -1,0 +1,125 @@
+{
+  "manifest_version": "1.0-draft",
+  "scanned_at": "2026-05-10T09:17:42.000000+00:00",
+  "source_file": "github-rest-api-v3.json",
+  "inferred_risk_tier": 2,
+  "nexum_risk_score": 100,
+  "model_compatibility_range": "REQUIRES_HUMAN_REVIEW",
+  "auto_detected_invariants": {
+    "immutable_fields": ["created_at", "html_url", "id", "node_id", "url"],
+    "numeric_limits": {
+      "Issue.number": { "minimum": 1 },
+      "PullRequest.number": { "minimum": 1 },
+      "Repository.watchers_count": { "minimum": 0 }
+    },
+    "required_headers": []
+  },
+  "findings_summary": [
+    {
+      "rule_id": "NEXUM-001",
+      "rule_name": "AuthLeakageRisk",
+      "severity": "CRITICAL",
+      "path": "/applications/{client_id}/tokens",
+      "method": "GET"
+    },
+    {
+      "rule_id": "NEXUM-001",
+      "rule_name": "AuthLeakageRisk",
+      "severity": "CRITICAL",
+      "path": "/user/emails",
+      "method": "GET"
+    },
+    {
+      "rule_id": "NEXUM-001",
+      "rule_name": "AuthLeakageRisk",
+      "severity": "CRITICAL",
+      "path": "/gists",
+      "method": "GET"
+    },
+    {
+      "rule_id": "NEXUM-002",
+      "rule_name": "DestructiveAmbiguity",
+      "severity": "CRITICAL",
+      "path": "/notifications",
+      "method": "DELETE"
+    },
+    {
+      "rule_id": "NEXUM-002",
+      "rule_name": "DestructiveAmbiguity",
+      "severity": "CRITICAL",
+      "path": "/user/keys",
+      "method": "DELETE"
+    },
+    {
+      "rule_id": "NEXUM-003",
+      "rule_name": "UnboundedScope",
+      "severity": "HIGH",
+      "path": "/repos/{owner}/{repo}",
+      "method": "PATCH"
+    },
+    {
+      "rule_id": "NEXUM-003",
+      "rule_name": "UnboundedScope",
+      "severity": "HIGH",
+      "path": "/orgs/{org}",
+      "method": "PATCH"
+    },
+    {
+      "rule_id": "NEXUM-004",
+      "rule_name": "IdempotencyMissing",
+      "severity": "HIGH",
+      "path": "/repos/{owner}/{repo}/issues",
+      "method": "POST"
+    },
+    {
+      "rule_id": "NEXUM-004",
+      "rule_name": "IdempotencyMissing",
+      "severity": "HIGH",
+      "path": "/repos/{owner}/{repo}/pulls",
+      "method": "POST"
+    },
+    {
+      "rule_id": "NEXUM-004",
+      "rule_name": "IdempotencyMissing",
+      "severity": "HIGH",
+      "path": "/repos/{owner}/{repo}/releases",
+      "method": "POST"
+    },
+    {
+      "rule_id": "NEXUM-005",
+      "rule_name": "SchemaVolatility",
+      "severity": "MEDIUM",
+      "path": "/repos/{owner}/{repo}/releases",
+      "method": "POST"
+    },
+    {
+      "rule_id": "NEXUM-005",
+      "rule_name": "SchemaVolatility",
+      "severity": "MEDIUM",
+      "path": "/repos/{owner}/{repo}/contents/{path}",
+      "method": "PUT"
+    }
+  ],
+  "manual_review_required": [
+    {
+      "field": "model_compatibility_range",
+      "reason": "Cannot be inferred from the spec. Depends on model capabilities, deployment context, and the desired trust level for this integration."
+    },
+    {
+      "field": "versioning_headers",
+      "reason": "The spec declares Accept and X-GitHub-Api-Version as required parameters. These are content negotiation and API versioning headers, not security controls. They are excluded from required_headers intentionally. Enforce them at the HTTP client configuration level, not as agent guardrails."
+    },
+    {
+      "field": "blast_radius_assessment",
+      "reason": "This API scored 100/100 with 7 CRITICAL findings across NEXUM-001 and NEXUM-002. Before any agent integration, document the maximum scope of data loss if agent credentials are compromised or if the agent misuses DELETE operations. GitHub repositories, SSH keys, and organization members are not recoverable after deletion. The full scan produced 404 findings — this manifest shows a representative subset."
+    },
+    {
+      "field": "destructive_operation_approval",
+      "reason": "Tier 2 rating requires human-in-the-loop for all destructive operations. Define an explicit allow-list of DELETE and PATCH endpoints the agent is permitted to call autonomously, and enforce it at the gateway. Default posture should be deny-all for destructive methods."
+    },
+    {
+      "field": "credential_exposure_remediation",
+      "reason": "NEXUM-001 fired 3 times indicating query-string credential transmission on GET endpoints. Verify whether these are legacy compatibility endpoints that should be disabled entirely, or whether agent configuration must enforce header-based authentication exclusively via Authorization: Bearer."
+    }
+  ]
+}

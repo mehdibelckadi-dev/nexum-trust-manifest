@@ -12,7 +12,7 @@ A Trust Manifest is a structured JSON document that describes the security risk 
 2. **What is the blast radius?** — A risk tier (0–2) that quantifies how dangerous unrestricted agent access would be.
 3. **What guardrails are needed?** — Auto-detected invariants (immutable fields, numeric limits, required headers) and a list of fields that require human review before the manifest can be considered complete.
 
-Trust Manifests are generated automatically from MCP or OpenAPI specs by the [Nexum Scanner](https://github.com/your-org/nexum). They are designed to be:
+Trust Manifests are generated automatically from MCP or OpenAPI specs by the [Nexum Scanner](https://github.com/mehdibelckadi-dev/nexum). They are designed to be:
 
 - **Read by humans** — security engineers and AI platform teams reviewing integrations before deployment.
 - **Checked by orchestration layers** — API gateways, agent supervisors, or CI pipelines that enforce a minimum trust tier.
@@ -121,7 +121,7 @@ The scanner applies five deterministic rules. No LLM is involved in any detectio
 
 ## How to generate a manifest
 
-Install the [Nexum Scanner](https://github.com/your-org/nexum) and run:
+Install the [Nexum Scanner](https://github.com/mehdibelckadi-dev/nexum) and run:
 
 ```bash
 nexum scan your-api-spec.json
